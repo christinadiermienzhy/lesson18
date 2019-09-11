@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		
+	</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="assets/style/style.css">
+
+</head>
+<body>
+<script type = "text/javascript">
+	
+
+const menuComponents=[
+	{
+		text: 'Action',
+		hrefLink:'https://ru.wikipedia.org',
+		linkClass: 'firstMenuLevel',
+		parentClass:'mainMenu'
+	},
+	{
+		text: 'Another action',
+		hrefLink:'https://ru.wikipedia.org',
+		linkClass: 'firstMenuLevel',
+		parentClass:'mainMenu'
+	},
+	{
+		text: 'Submenu',
+		hrefLink:'#',
+		linkClass: 'firstMenuLevel',
+		parentClass:'mainMenu',
+		childrenItems:[
+			{
+				text: 'Submenu action',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			},
+			{
+				text: 'Another submenu action',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			},
+			{
+				text: 'Subsubmenu',
+				hrefLink:'#',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel',
+				childrenItems:[
+					{
+						text: 'action1',
+						hrefLink:'https://ru.wikipedia.org',
+						linkClass: 'ThirdMenuLevel',
+						parentClass:'SecondMenuLevel'
+					},
+					{
+						text: 'action2',
+						hrefLink:'https://ru.wikipedia.org',
+						linkClass: 'ThirdMenuLevel',
+						parentClass:'SecondMenuLevel'
+					},
+					{
+						text: 'action3',
+						hrefLink:'https://ru.wikipedia.org',
+						linkClass: 'ThirdMenuLevel',
+						parentClass:'SecondMenuLevel'
+					}
+				]
+			},
+			{
+				text: 'Second subsubmenu',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			}
+		]
+	},
+	{
+		text: 'Submenu2',
+		hrefLink:'#',
+		linkClass: 'firstMenuLevel',
+		parentClass:'mainMenu',
+		childrenItems:[
+			{
+				text: 'action111',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			},
+			{
+				text: 'action112',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			},
+			{
+				text: 'action112',
+				hrefLink:'https://ru.wikipedia.org',
+				linkClass: 'SecondMenuLevel',
+				parentClass:'firstMenuLevel'
+			}
+		]
+	}
+]
+
+
+const createMenu = function (arr){
+
+	const headerBlock = document.createElement ('header') ;
+
+	const navigationBlock = document.createElement ('nav') ;
+
+	const additionalBlock = document.createElement ('div') ;
+
+		additionalBlock.classList = 'box';
+
+	const textTitle = document.createElement ('p');
+
+		textTitle.innerText = 'Dropdown link';
+
+	document.body.prepend(headerBlock);
+
+	document.body.firstElementChild.prepend(navigationBlock);
+
+	document.body.firstElementChild.firstElementChild.prepend(additionalBlock);
+
+	let countLevels=0;
+
+	let parentClass='mainMenu';
+
+ 	const creatNavigationMenu = function(arr){
+
+ 		const menuTitle = document.createElement ('ul');
+
+ 			if (countLevels===0) {
+
+ 				menuTitle.classList = 'mainMenu';
+
+ 				document.body.getElementsByClassName('box')[0].prepend(menuTitle);
+
+ 				document.body.getElementsByClassName(menuTitle.classList)[0].prepend(textTitle);
+
+ 			} else {
+ 				menuTitle.classList = 'subMenuList'+countLevels;
+ 				document.body.getElementsByClassName(parentClass)[0].prepend(menuTitle);
+ 			}
+		arr.forEach (function(item, index, arr) {
+
+				const menuItem = document.createElement('li');
+
+					menuItem.classList.add(item.linkClass, item.linkClass + index);
+
+				const menuItemLink = document.createElement('a');
+
+					menuItemLink.href = item.hrefLink;
+
+					menuItemLink.innerText = item.text;
+
+				document.body.getElementsByClassName(menuTitle.classList)[0].append(menuItem);
+
+				document.body.getElementsByClassName(menuTitle.classList)[0].getElementsByClassName(item.linkClass+index)[0].append(menuItemLink);
+
+				if (item.hasOwnProperty('childrenItems')) {
+
+					menuItemLink.classList.add('dropdownList');
+
+					countLevels+=1;
+
+					parentClass = item.linkClass+index;
+					
+				    return creatNavigationMenu(item.childrenItems);
+				}
+		})
+	}
+	creatNavigationMenu(arr);
+
+	const clickOnDropdown = document.querySelectorAll('a.dropdownList');
+
+		for (const everyClickOnDropdown of clickOnDropdown) {
+			everyClickOnDropdown.addEventListener('click', function(event){
+
+				const activated = document.querySelectorAll('ul.active');
+
+					activated.forEach( activatedItem =>{
+
+						if (!activatedItem.contains(event.target)){
+							activatedItem.classList.remove('active');
+						}
+				})
+				event.target.parentElement.querySelector('ul').classList.add('active');
+				});
+			}
+
+	const clickOnLink = document.querySelectorAll('a');
+		clickOnLink.forEach(itemLink=>{
+
+			if (!itemLink.classList.contains('dropdownList')){
+					itemLink.addEventListener('click', (item) => {
+						item.preventDefault();
+						if (confirm('Вы уверены, что хотите покинуть страницу?')){
+						window.location.href=item.target.getAttribute('href');
+						}
+				})
+			}	
+	})
+}
+
+createMenu(menuComponents);
+
+
+</script>
+</body>
+</html>
